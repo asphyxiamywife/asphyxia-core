@@ -15,7 +15,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"modid" {
+		"asphyxia_core" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
