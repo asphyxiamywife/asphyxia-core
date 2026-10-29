@@ -5,9 +5,14 @@ on:
     tags:
       - 'v*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
+    timeout-minutes: 20
 
     permissions:
       contents: write
@@ -20,17 +25,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v6
-
-      - name: setup jdk
-        uses: actions/setup-java@v5
-        with:
-          java-version: '25'
-          distribution: 'microsoft'
-
       - name: setup gradle
         uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew

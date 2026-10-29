@@ -6,19 +6,24 @@
 name: build
 on: [pull_request, push]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
+    timeout-minutes: 20
     steps:
       - name: checkout repository
-        uses: actions/checkout@v6
-      - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v6
-      - name: setup jdk
-        uses: actions/setup-java@v5
+        uses: actions/checkout@v7
+      - name: setup gradle
+        uses: gradle/actions/setup-gradle@v6
         with:
-          java-version: '25'
-          distribution: 'microsoft'
+          cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
